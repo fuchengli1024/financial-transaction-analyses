@@ -1,0 +1,82 @@
+swagger: "2.0"
+info:
+  title: Financial Transaction Analyses
+  description: Financial Transaction Analyses
+  version: 1.0.0
+
+basePath: /v1/
+
+paths:
+  /transactionsAnalyses:
+    post:
+      tags:
+        - transactionsAnalyses
+      summary: analyses transaction records for a account in a specifice date range
+      operationId: transactionsAnalyses
+      parameters:
+        - in: body
+          name: request
+          required: false
+          schema:
+            $ref: '#/definitions/Request'
+      responses:
+        '200':
+          description: get transactions
+          schema:
+            $ref: '#/definitions/AnalysesResult'
+      deprecated: false
+      produces:
+        - application/octet-stream
+definitions:
+  Request:
+    properties:
+      accountId:
+        type: string
+        description: from account Id
+        example: ACC334455
+      from:
+        type: string
+        description: start date
+        example: '20/10/2018 12:00:00'
+      to:
+        type: string
+        description: end date
+        example: '20/10/2018 19:00:00'
+  AnalysesResult:
+    type: object
+    properties:
+      relativeBalance:
+        type: number
+        description: transfer amount
+      numbers:
+        type: integer
+        format: int32
+        description: transaction number
+  Transaction:
+    type: object
+    required:  # List the required properties here
+      - transactionId
+    properties:
+      transactionId:
+        type: string
+      fromAccountId:
+        type: string
+        description: from account Id
+      toAccountId:
+        type: string
+        description: to account Id
+      createdAt:
+        type: string
+        example: create date
+      amount:
+        type: number
+        description: transfer amount
+      transactionType:
+        type: string
+        enum:
+          - PAYMENT
+          - REVERSAL
+      relatedTransaction:
+        type: string
+        description: related transaction id
+x-components: {}

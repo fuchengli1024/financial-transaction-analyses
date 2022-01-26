@@ -76,7 +76,6 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
       BigDecimal sum = BigDecimal.ZERO;
       for (Transaction transaction : qualifiedTransactions) {
         if (request.getAccountId().equalsIgnoreCase(transaction.getFromAccountId())) {
-          logger.info(transaction.getAmount().negate().toString());
           sum = sum.add(transaction.getAmount().negate());
         } else {
           sum = sum.add(transaction.getAmount());
@@ -87,13 +86,13 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
       analysesResult.setRelativeBalance(sum);
       return analysesResult;
     } catch (IOException ex) {
-      logger.info(ex.getLocalizedMessage());
+      logger.error(ex.getLocalizedMessage());
       throw new RuntimeException(ex);
     } catch (ParseException ex) {
       logger.error(ex.getLocalizedMessage());
       throw new RuntimeException(ex);
     } catch (Exception ex) {
-      logger.info(ex.getLocalizedMessage());
+      logger.error(ex.getLocalizedMessage());
       throw new RuntimeException(ex);
     }
 
