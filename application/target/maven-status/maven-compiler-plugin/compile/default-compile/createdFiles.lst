@@ -1,6 +1,0 @@
-com\codetest\fucheng\transactionanalyses\validators\TransactionQueryValidator.class
-com\codetest\fucheng\transactionanalyses\exception\ErrorResponse.class
-com\codetest\fucheng\transactionanalyses\service\TransactionAnalysesService.class
-com\codetest\fucheng\transactionanalyses\config\SwaggerConfig.class
-com\codetest\fucheng\transactionanalyses\exception\ValidationError.class
-com\codetest\fucheng\transactionanalyses\Application.class
