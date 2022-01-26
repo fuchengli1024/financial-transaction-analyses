@@ -8,8 +8,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,47 +31,11 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
   @Override
   public AnalysesResult analyses(Request request) {
     AnalysesResult analysesResult = new AnalysesResult();
-
     try {
-
-      logger.info(sdf.parse(request.getFrom()).toString());
-      logger.info(sdf.parse(request.getTo()).toString());
-
-//      Long balance = transactionList.stream().filter(
-//          transaction -> {
-//            try {
-//              return transaction.getFromAccountId().equalsIgnoreCase(request.getAccountId())
-//                  && sdf.parse(request.getFrom()).before(sdf.parse(transaction.getCreatedAt()))
-//                  && sdf.parse(request.getTo()).after(sdf.parse(transaction.getCreatedAt()));
-//            } catch (ParseException e) {
-//              throw new RuntimeException(e);
-//            }
-//          }).mapToLong(t -> t.getAmount()).sum();
-
-      return getTransactions(request, analysesResult);
-
-    } catch (IOException ex) {
-      logger.info(ex.getLocalizedMessage());
-
-    } catch (ParseException e) {
-      logger.error(e.getLocalizedMessage());
-      throw new RuntimeException(e);
-
-    } catch (Exception ex) {
-      logger.info(ex.getLocalizedMessage());
-    }
-    return analysesResult;
-
-  }
-
-
-  private AnalysesResult getTransactions(Request request, AnalysesResult analysesResult)
-      throws Exception {
-    List<Transaction> transactionsInTimeFrame = new ArrayList<>();
-    List<Transaction> reversingTransactions = new ArrayList<>();
-    logger.info(System.getProperty("user.dir"));
-    try (BufferedReader br = new BufferedReader(
-        new FileReader("application/src/main/resources/transactions.csv"))) {
+      List<Transaction> transactionsInTimeFrame = new ArrayList<>();
+      List<Transaction> reversingTransactions = new ArrayList<>();
+      BufferedReader br = new BufferedReader(
+          new FileReader("application/src/main/resources/transactions.csv"));
       String line;
       while ((line = br.readLine()) != null) {
         String[] values = line.split(",");
@@ -87,7 +49,6 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
         if (values.length > 6) {
           transaction.setRelatedTransaction(values[6].trim());
         }
-
         //the account transactions in the time range
         if ((transaction.getFromAccountId().equalsIgnoreCase(request.getAccountId())
             || transaction.getToAccountId().equalsIgnoreCase(request.getAccountId()))
@@ -95,13 +56,13 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
             && sdf.parse(request.getTo()).after(sdf.parse(transaction.getCreatedAt()))) {
           transactionsInTimeFrame.add(transaction);
         }
-
-        //
+        //get all reversingTransactions
         if (transaction.getTransactionType().toString().equalsIgnoreCase("REVERSAL")) {
           reversingTransactions.add(transaction);
         }
       }
 
+      //get the transactions in the time range and hasn't revered
       List<Transaction> qualifiedTransactions = transactionsInTimeFrame.stream()
           .filter(transaction -> {
                 //the transaction has not reverted
@@ -111,8 +72,8 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
               }
           ).collect(Collectors.toList());
 
+      //sum up the balance according to the from/to
       BigDecimal sum = BigDecimal.ZERO;
-
       for (Transaction transaction : qualifiedTransactions) {
         if (request.getAccountId().equalsIgnoreCase(transaction.getFromAccountId())) {
           logger.info(transaction.getAmount().negate().toString());
@@ -124,9 +85,18 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
 
       analysesResult.setNumbers(qualifiedTransactions.size());
       analysesResult.setRelativeBalance(sum);
-
       return analysesResult;
+    } catch (IOException ex) {
+      logger.info(ex.getLocalizedMessage());
+      throw new RuntimeException(ex);
+    } catch (ParseException ex) {
+      logger.error(ex.getLocalizedMessage());
+      throw new RuntimeException(ex);
+    } catch (Exception ex) {
+      logger.info(ex.getLocalizedMessage());
+      throw new RuntimeException(ex);
     }
+
   }
 
 }
