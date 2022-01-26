@@ -49,11 +49,13 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
         if (values.length > 6) {
           transaction.setRelatedTransaction(values[6].trim());
         }
-        //the account transactions in the time range
+        //the payments of the account in the time range
         if ((transaction.getFromAccountId().equalsIgnoreCase(request.getAccountId())
             || transaction.getToAccountId().equalsIgnoreCase(request.getAccountId()))
             && sdf.parse(request.getFrom()).before(sdf.parse(transaction.getCreatedAt()))
-            && sdf.parse(request.getTo()).after(sdf.parse(transaction.getCreatedAt()))) {
+            && sdf.parse(request.getTo()).after(sdf.parse(transaction.getCreatedAt()))
+            && transaction.getTransactionType().toString().equalsIgnoreCase("PAYMENT")) {
+
           transactionsInTimeFrame.add(transaction);
         }
         //get all reversingTransactions
@@ -62,7 +64,7 @@ public class TransactionAnalysesServiceImpl implements TransactionAnalysesServic
         }
       }
 
-      //get the transactions in the time range and hasn't revered
+      //get the transactions in the time range and hasn't reversing transaction
       List<Transaction> qualifiedTransactions = transactionsInTimeFrame.stream()
           .filter(transaction -> {
                 //the transaction has not reverted
