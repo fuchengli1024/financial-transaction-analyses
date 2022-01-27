@@ -21,7 +21,7 @@ Swagger gen code and Swagger UI for api first and easy to view/test rest api
 
 Next Step 
 
-rest payload validation
+request payload validation
 
 JWT
 
