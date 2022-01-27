@@ -13,7 +13,9 @@ Open swagger page http://localhost:8080/swagger-ui/index.html and execute in the
 
 
 Tech Stack
+
 Springboot quick development
+
 Swagger gen code and Swagger UI for api first and easy to view/test rest api
 
 
