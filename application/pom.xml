@@ -34,6 +34,7 @@
         <checkstyle.skip>false</checkstyle.skip>
         <checkstyle.config.location>google_checks.xml</checkstyle.config.location>
         <spring.boot-version>2.3.12.RELEASE</spring.boot-version>
+        <opencsv.version>5.5.2</opencsv.version>
     </properties>
 
 
@@ -72,6 +73,12 @@
             </exclusions>
         </dependency>
         <!-- end::actuator[] -->
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

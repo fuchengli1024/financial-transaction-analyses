@@ -19,6 +19,8 @@ Swagger gen code and Swagger UI for api first and easy to view/test rest api
 
 Next Step 
 
+rest payload validation
+
 JWT
 
 create docker file  and create jenkins for CICD deployment
